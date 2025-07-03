@@ -1,0 +1,161 @@
+'use client';
+
+import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { SalesService } from '@/services/salesService';
+import { CreateSaleData, PAYMENT_METHODS } from '@/types';
+import { X, Loader2, DollarSign } from 'lucide-react';
+
+interface SaleFormProps {
+  onClose: () => void;
+  onSaleCreated: () => void;
+}
+
+export const SaleForm = ({ onClose, onSaleCreated }: SaleFormProps) => {
+  const { getIdToken } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [formData, setFormData] = useState<CreateSaleData>({
+    description: '',
+    amount: 0,
+    paymentMethod: 'efectivo'
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      const token = await getIdToken();
+      if (!token) throw new Error('No hay token de autenticación');
+
+      await SalesService.createSale(formData, token);
+      onSaleCreated();
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Error al crear la venta';
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: name === 'amount' ? parseFloat(value) || 0 : value
+    }));
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b">
+          <div className="flex items-center">
+            <DollarSign className="w-6 h-6 text-blue-600 mr-2" />
+            <h2 className="text-lg font-semibold text-gray-900">Nueva Venta</h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <div>
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+              Descripción
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+              placeholder="Ej: Venta de producto X, servicio Y..."
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-2">
+              Monto
+            </label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600">$</span>
+              <input
+                id="amount"
+                name="amount"
+                type="number"
+                step="0.01"
+                min="0"
+                value={formData.amount || ''}
+                onChange={handleInputChange}
+                className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                placeholder="0.00"
+                required
+              />
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="paymentMethod" className="block text-sm font-medium text-gray-700 mb-2">
+              Medio de Pago
+            </label>
+            <select
+              id="paymentMethod"
+              name="paymentMethod"
+              value={formData.paymentMethod}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+              required
+            >
+              {PAYMENT_METHODS.map((method) => (
+                <option key={method.value} value={method.value}>
+                  {method.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+              {error}
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex gap-3 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="animate-spin w-4 h-4 mr-2" />
+                  Guardando...
+                </>
+              ) : (
+                'Crear Venta'
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
