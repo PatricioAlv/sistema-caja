@@ -54,6 +54,7 @@ router.post('/', [
       userId: req.user!.uid
     };
 
+    console.log('Datos recibidos en backend:', JSON.stringify(saleData, null, 2));
     const sale = await salesService.createSale(saleData);
     
     return res.status(201).json({

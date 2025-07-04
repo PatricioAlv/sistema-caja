@@ -1,31 +1,26 @@
 import { firestore } from '../config/firebase';
-import { Sale, CreateSaleData, SalesFilters, PaymentMethod, CommissionConfig } from '../../../shared/types';
+import { Sale, CreateSaleData, SalesFilters, PaymentMethod } from '../../../shared/types';
 import { format, startOfDay, endOfDay } from 'date-fns';
+import { CommissionService } from './commissionService';
 
 export class SalesService {
   private salesCollection = firestore.collection('sales');
 
-  // Configuración de comisiones por defecto
-  private commissionConfigs: CommissionConfig[] = [
-    { paymentMethod: 'efectivo', percentage: 0 },
-    { paymentMethod: 'transferencia', percentage: 0 },
-    { paymentMethod: 'tarjeta_debito', percentage: 2.5 },
-    { paymentMethod: 'tarjeta_credito', percentage: 3.5 },
-    { paymentMethod: 'mercado_pago', percentage: 4.5 },
-    { paymentMethod: 'otro', percentage: 0 }
-  ];
-
-  private calculateCommission(amount: number, paymentMethod: PaymentMethod): number {
-    const config = this.commissionConfigs.find(c => c.paymentMethod === paymentMethod);
-    if (!config) return 0;
-    
-    const commission = (amount * config.percentage) / 100;
-    return Math.round(commission * 100) / 100; // Redondear a 2 decimales
-  }
-
-  private calculateAmounts(amount: number, paymentMethod: PaymentMethod) {
+  private async calculateAmounts(
+    userId: string, 
+    amount: number, 
+    paymentMethod: PaymentMethod,
+    cardBrand?: string,
+    installments?: number
+  ) {
     const isDigital = paymentMethod !== 'efectivo';
-    const commission = this.calculateCommission(amount, paymentMethod);
+    const commission = await CommissionService.calculateCommission(
+      userId, 
+      paymentMethod, 
+      amount, 
+      cardBrand as any, 
+      installments
+    );
     
     return {
       cashAmount: isDigital ? 0 : amount,
@@ -47,7 +42,13 @@ export class SalesService {
       saleDate = format(localDate, 'yyyy-MM-dd');
     }
     
-    const amounts = this.calculateAmounts(data.amount, data.paymentMethod);
+    const amounts = await this.calculateAmounts(
+      data.userId,
+      data.amount, 
+      data.paymentMethod,
+      data.cardBrand,
+      data.installments
+    );
     
     const saleData: Omit<Sale, 'id'> = {
       date: saleDate,
@@ -58,6 +59,14 @@ export class SalesService {
       createdAt: now.toISOString(),
       updatedAt: now.toISOString()
     };
+
+    // Solo agregar cardBrand e installments si tienen valores definidos
+    if (data.cardBrand !== undefined) {
+      saleData.cardBrand = data.cardBrand;
+    }
+    if (data.installments !== undefined) {
+      saleData.installments = data.installments;
+    }
 
     const docRef = await this.salesCollection.add(saleData);
     
@@ -137,13 +146,29 @@ export class SalesService {
       updateData.description = updates.description;
     }
 
-    if (updates.amount !== undefined || updates.paymentMethod) {
+    if (updates.amount !== undefined || updates.paymentMethod || updates.cardBrand || updates.installments) {
       const amount = updates.amount ?? (existingSale.cashAmount + existingSale.digitalAmount);
       const paymentMethod = updates.paymentMethod ?? existingSale.paymentMethod;
+      const cardBrand = updates.cardBrand ?? existingSale.cardBrand;
+      const installments = updates.installments ?? existingSale.installments;
       
-      const amounts = this.calculateAmounts(amount, paymentMethod);
+      const amounts = await this.calculateAmounts(
+        userId, 
+        amount, 
+        paymentMethod,
+        cardBrand,
+        installments
+      );
       Object.assign(updateData, amounts);
       updateData.paymentMethod = paymentMethod;
+      
+      // Solo agregar cardBrand e installments si tienen valores definidos
+      if (cardBrand !== undefined) {
+        updateData.cardBrand = cardBrand;
+      }
+      if (installments !== undefined) {
+        updateData.installments = installments;
+      }
     }
 
     if (updates.date) {

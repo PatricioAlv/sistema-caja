@@ -7,7 +7,8 @@ import { WithdrawalService } from '@/services/withdrawalService';
 import { useAuth } from '@/contexts/AuthContext';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { Trash2, Minus, Eye, Clock, DollarSign, CreditCard, Calculator } from 'lucide-react';
+import { Trash2, Minus, Eye, Clock, DollarSign, CreditCard, Calculator, FileText } from 'lucide-react';
+import { ReceiptModal } from './ReceiptModal';
 
 // Tipo unificado para movimientos
 interface Movement {
@@ -30,6 +31,8 @@ export const MovementsList = ({ sales, withdrawals, loading, onMovementDeleted }
   const { getIdToken } = useAuth();
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [showReceiptModal, setShowReceiptModal] = useState(false);
+  const [selectedMovement, setSelectedMovement] = useState<{ type: 'sale' | 'withdrawal', data: Sale | Withdrawal } | null>(null);
 
   // Combinar y ordenar movimientos por hora
   const movements: Movement[] = [
@@ -111,6 +114,14 @@ export const MovementsList = ({ sales, withdrawals, loading, onMovementDeleted }
 
   const toggleExpanded = (id: string) => {
     setExpandedId(expandedId === id ? null : id);
+  };
+
+  const handleGenerateReceipt = (movement: Movement) => {
+    setSelectedMovement({
+      type: movement.type,
+      data: movement.data
+    });
+    setShowReceiptModal(true);
   };
 
   const formatTime = (timeString: string) => {
@@ -240,6 +251,14 @@ export const MovementsList = ({ sales, withdrawals, loading, onMovementDeleted }
                     </div>
                     
                     <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => handleGenerateReceipt(movement)}
+                        className="p-1 text-gray-400 hover:text-blue-600"
+                        title="Generar comprobante"
+                      >
+                        <FileText className="w-4 h-4" />
+                      </button>
+                      
                       {((movement.type === 'sale' && (movement.data as Sale).description.length > 30) ||
                         (movement.type === 'withdrawal' && (movement.data as Withdrawal).description)) && (
                         <button
@@ -294,6 +313,19 @@ export const MovementsList = ({ sales, withdrawals, loading, onMovementDeleted }
           );
         })}
       </div>
+      
+      {/* Receipt Modal */}
+      {showReceiptModal && selectedMovement && (
+        <ReceiptModal
+          isOpen={showReceiptModal}
+          onClose={() => {
+            setShowReceiptModal(false);
+            setSelectedMovement(null);
+          }}
+          type={selectedMovement.type}
+          data={selectedMovement.data}
+        />
+      )}
     </div>
   );
 };

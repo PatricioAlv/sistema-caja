@@ -81,7 +81,8 @@ export const WithdrawalForm = ({ onClose, onWithdrawalCreated }: WithdrawalFormP
                 min="0.01"
                 value={formData.amount || ''}
                 onChange={handleInputChange}
-                className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                onWheel={(e) => e.currentTarget.blur()}
+                className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-800 font-medium placeholder-gray-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 placeholder="0.00"
                 required
               />

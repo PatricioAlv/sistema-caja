@@ -1,3 +1,24 @@
+// Configuración del negocio
+export interface BusinessConfig {
+  id?: string;
+  userId: string;
+  businessName: string;
+  ownerName?: string;
+  address?: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  logo?: string; // URL del logo (opcional)
+  description?: string;
+  currency: string; // Moneda (ej: 'ARS', 'USD', 'EUR')
+  timezone: string; // Zona horaria (ej: 'America/Argentina/Buenos_Aires')
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Alias para compatibilidad con PDF service
+export type Business = BusinessConfig;
+
 // Tipos para las ventas
 export interface Sale {
   id: string;
@@ -7,6 +28,8 @@ export interface Sale {
   digitalAmount: number;
   commissionAmount: number;
   paymentMethod: PaymentMethod;
+  cardBrand?: CardBrand; // Para tarjetas de crédito
+  installments?: number; // Cantidad de cuotas (1, 3, 6, 12)
   userId: string;
   createdAt: string;
   updatedAt: string;
@@ -16,10 +39,16 @@ export interface Sale {
 export type PaymentMethod = 
   | 'efectivo'
   | 'transferencia'
+  | 'qr'
   | 'tarjeta_debito'
-  | 'tarjeta_credito'
-  | 'mercado_pago'
-  | 'otro';
+  | 'tarjeta_credito';
+
+// Marcas de tarjetas de crédito
+export type CardBrand = 
+  | 'visa'
+  | 'mastercard'
+  | 'naranja'
+  | 'tuya';
 
 // Configuración de comisiones por medio de pago
 export interface CommissionConfig {
@@ -46,6 +75,8 @@ export interface CreateSaleData {
   description: string;
   amount: number;
   paymentMethod: PaymentMethod;
+  cardBrand?: CardBrand; // Requerido para tarjetas de crédito
+  installments?: number; // Requerido para tarjetas de crédito
   date?: string; // Opcional, por defecto fecha actual
 }
 
@@ -122,8 +153,64 @@ export const WITHDRAWAL_REASONS: { value: WithdrawalReason; label: string }[] = 
 export const PAYMENT_METHODS: { value: PaymentMethod; label: string }[] = [
   { value: 'efectivo', label: 'Efectivo' },
   { value: 'transferencia', label: 'Transferencia' },
+  { value: 'qr', label: 'QR (Modo, CVU)' },
   { value: 'tarjeta_debito', label: 'Tarjeta de Débito' },
   { value: 'tarjeta_credito', label: 'Tarjeta de Crédito' },
-  { value: 'mercado_pago', label: 'Mercado Pago' },
-  { value: 'otro', label: 'Otro' },
 ];
+
+// Marcas de tarjetas de crédito
+export const CARD_BRANDS: { value: CardBrand; label: string }[] = [
+  { value: 'visa', label: 'Visa' },
+  { value: 'mastercard', label: 'Mastercard' },
+  { value: 'naranja', label: 'Naranja' },
+  { value: 'tuya', label: 'Tuya' },
+];
+
+// Opciones de cuotas
+export const INSTALLMENT_OPTIONS: { value: number; label: string }[] = [
+  { value: 1, label: '1 cuota' },
+  { value: 3, label: '3 cuotas' },
+  { value: 6, label: '6 cuotas' },
+  { value: 12, label: '12 cuotas' },
+];
+
+// Configuración de comisiones
+export interface CommissionConfig {
+  id?: string;
+  userId: string;
+  paymentMethod: PaymentMethod;
+  cardBrand?: CardBrand; // Solo para tarjetas de crédito
+  installments?: number; // Solo para tarjetas de crédito (1, 3, 6, 12)
+  percentage: number;
+  fixedAmount?: number; // Comisión fija adicional (opcional)
+  isActive: boolean;
+  updatedAt: string;
+}
+
+// Configuración predeterminada de comisiones
+export interface DefaultCommissions {
+  efectivo: number;
+  transferencia: number;
+  qr: number;
+  tarjeta_debito: number;
+  tarjeta_credito: {
+    visa: { [key: number]: number }; // { 1: 2.8, 3: 3.2, 6: 3.5, 12: 4.0 }
+    mastercard: { [key: number]: number };
+    naranja: { [key: number]: number };
+    tuya: { [key: number]: number };
+  };
+}
+
+// Configuración predeterminada de comisiones (valores promedio Argentina 2024)
+export const DEFAULT_COMMISSIONS: DefaultCommissions = {
+  efectivo: 0,
+  transferencia: 0,
+  qr: 1.2,
+  tarjeta_debito: 2.0,
+  tarjeta_credito: {
+    visa: { 1: 2.8, 3: 3.2, 6: 3.5, 12: 4.0 },
+    mastercard: { 1: 2.8, 3: 3.2, 6: 3.5, 12: 4.0 },
+    naranja: { 1: 3.5, 3: 4.0, 6: 4.5, 12: 5.0 },
+    tuya: { 1: 3.0, 3: 3.5, 6: 4.0, 12: 4.5 },
+  },
+};

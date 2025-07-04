@@ -2,6 +2,12 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { BusinessProvider } from "@/contexts/BusinessContext";
+
+// Importar script de prueba solo en desarrollo
+if (process.env.NODE_ENV === 'development') {
+  import("@/services/testReceipts");
+}
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,7 +35,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-          {children}
+          <BusinessProvider>
+            {children}
+          </BusinessProvider>
         </AuthProvider>
       </body>
     </html>

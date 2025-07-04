@@ -13,6 +13,8 @@ import { authMiddleware } from './middleware/auth';
 import salesRoutes from './routes/sales';
 import summaryRoutes from './routes/summary';
 import withdrawalRoutes from './routes/withdrawals';
+import commissionRoutes from './routes/commissions';
+import businessRoutes from './routes/business';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -45,6 +47,8 @@ app.use('/api', authMiddleware);
 app.use('/api/sales', salesRoutes);
 app.use('/api/summary', summaryRoutes);
 app.use('/api/withdrawals', withdrawalRoutes);
+app.use('/api/commissions', commissionRoutes);
+app.use('/api/business', businessRoutes);
 
 // Middleware de manejo de errores
 app.use(errorHandler);
