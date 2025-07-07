@@ -204,3 +204,88 @@ export const DEFAULT_COMMISSIONS: DefaultCommissions = {
     tuya: { 1: 3.0, 3: 3.5, 6: 4.0, 12: 4.5 },
   },
 };
+
+// Tipos para Cuentas Corrientes
+export interface Customer {
+  id: string;
+  name: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  taxId?: string;
+  creditLimit?: number;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+  userId: string;
+}
+
+export interface AccountMovement {
+  id: string;
+  customerId: string;
+  customerName: string;
+  date: string;
+  description: string;
+  code?: string; // código de prenda
+  amount: number; // positivo para ventas, negativo para pagos
+  balance: number; // saldo después del movimiento
+  type: 'sale' | 'payment' | 'adjustment';
+  createdAt: string;
+  updatedAt: string;
+  userId: string;
+}
+
+export interface CustomerAccount {
+  customer: Customer;
+  movements: AccountMovement[];
+  currentBalance: number;
+  totalSales: number;
+  totalPayments: number;
+}
+
+// Para importación desde Excel
+export interface ImportedMovement {
+  fecha: string;
+  descripcion: string;
+  codigo?: string;
+  precio: number;
+  saldo: number;
+}
+
+export interface ImportCustomerData {
+  customerName: string;
+  movements: ImportedMovement[];
+}
+
+export interface CreateCustomerData {
+  name: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  taxId?: string;
+  creditLimit?: number;
+  notes?: string;
+}
+
+export interface CreateAccountMovementData {
+  customerId: string;
+  description: string;
+  code?: string;
+  amount: number;
+  type: 'sale' | 'payment' | 'adjustment';
+  date?: string;
+}
+
+export interface CustomerFilters {
+  name?: string;
+  hasDebt?: boolean;
+  userId?: string;
+}
+
+export interface AccountMovementFilters {
+  customerId?: string;
+  startDate?: string;
+  endDate?: string;
+  type?: 'sale' | 'payment' | 'adjustment';
+  userId?: string;
+}

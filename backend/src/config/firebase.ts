@@ -20,6 +20,10 @@ export const initializeFirebase = () => {
       databaseURL: `https://${projectId}.firebaseio.com`,
     });
 
+    // Configurar Firestore para ignorar valores undefined
+    const firestoreInstance = admin.firestore();
+    firestoreInstance.settings({ ignoreUndefinedProperties: true });
+
     console.log('🔥 Firebase Admin SDK inicializado');
   }
 };

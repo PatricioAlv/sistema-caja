@@ -63,14 +63,171 @@ Ve a **Firestore Database** > **Reglas** y reemplaza con:
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Permitir acceso a las ventas solo al usuario autenticado
+    // Función helper para verificar autenticación
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Función helper para verificar que el usuario es dueño del documento
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    // Función helper para verificar que el usuario es dueño del documento que se está creando
+    function isOwnerCreate(userId) {
+      return request.auth.uid == userId;
+    }
+
+    // === COLECCIÓN SALES ===
     match /sales/{saleId} {
-      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
-      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+      allow read, write: if isAuthenticated() && isOwner(resource.data.userId);
+      allow create: if isAuthenticated() && isOwnerCreate(request.resource.data.userId);
+    }
+
+    // === COLECCIÓN WITHDRAWALS ===
+    match /withdrawals/{withdrawalId} {
+      allow read, write: if isAuthenticated() && isOwner(resource.data.userId);
+      allow create: if isAuthenticated() && isOwnerCreate(request.resource.data.userId);
+    }
+
+    // === COLECCIÓN CUSTOMERS (Cuentas Corrientes) ===
+    match /customers/{customerId} {
+      allow read, write: if isAuthenticated() && isOwner(resource.data.userId);
+      allow create: if isAuthenticated() && isOwnerCreate(request.resource.data.userId);
+    }
+
+    // === COLECCIÓN ACCOUNT_MOVEMENTS (Movimientos de Cuenta Corriente) ===
+    match /accountMovements/{movementId} {
+      allow read, write: if isAuthenticated() && isOwner(resource.data.userId);
+      allow create: if isAuthenticated() && isOwnerCreate(request.resource.data.userId);
+    }
+
+    // === COLECCIÓN BUSINESS_CONFIG ===
+    match /businessConfig/{configId} {
+      allow read, write: if isAuthenticated() && isOwner(resource.data.userId);
+      allow create: if isAuthenticated() && isOwnerCreate(request.resource.data.userId);
+    }
+
+    // === COLECCIÓN COMMISSIONS ===
+    match /commissions/{commissionId} {
+      allow read, write: if isAuthenticated() && isOwner(resource.data.userId);
+      allow create: if isAuthenticated() && isOwnerCreate(request.resource.data.userId);
+    }
+
+    // === REGLAS PARA FUTURAS COLECCIONES ===
+    // Regla general para cualquier nueva colección que tenga userId
+    match /{collection}/{documentId} {
+      allow read, write: if isAuthenticated() && 
+        collection in ['products', 'categories', 'reports', 'settings'] &&
+        resource.data.keys().hasAll(['userId']) &&
+        isOwner(resource.data.userId);
+      allow create: if isAuthenticated() && 
+        collection in ['products', 'categories', 'reports', 'settings'] &&
+        request.resource.data.keys().hasAll(['userId']) &&
+        isOwnerCreate(request.resource.data.userId);
     }
   }
 }
 ```
+
+### 🔐 **Explicación de las Reglas:**
+
+**Principios de Seguridad:**
+1. ✅ **Solo usuarios autenticados** pueden acceder a los datos
+2. ✅ **Cada usuario solo ve sus propios datos** (aislamiento por `userId`)
+3. ✅ **Previene acceso no autorizado** entre usuarios
+4. ✅ **Permite operaciones CRUD completas** para datos propios
+
+**Colecciones Protegidas:**
+- `sales` - Ventas del sistema
+- `withdrawals` - Retiros/gastos  
+- `customers` - Clientes (cuentas corrientes)
+- `accountMovements` - Movimientos de cuenta corriente
+- `businessConfig` - Configuración del negocio
+- `commissions` - Configuración de comisiones
+
+**Funciones Helper:**
+- `isAuthenticated()` - Verifica que el usuario esté logueado
+- `isOwner()` - Verifica que el `userId` del documento coincida con el usuario actual
+- `isOwnerCreate()` - Verifica el `userId` en documentos que se están creando
+
+### 🚨 **Reglas Alternativas (Más Restrictivas):**
+
+Si quieres mayor seguridad, puedes usar estas reglas más específicas:
+
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // === REGLAS MÁS RESTRICTIVAS ===
+    
+    // Solo permitir lectura y escritura de documentos propios
+    match /sales/{saleId} {
+      allow read, write: if request.auth != null && 
+        request.auth.uid == resource.data.userId &&
+        resource.data.keys().hasAll(['userId', 'date', 'description']);
+      allow create: if request.auth != null && 
+        request.auth.uid == request.resource.data.userId &&
+        request.resource.data.keys().hasAll(['userId', 'date', 'description']);
+    }
+
+    match /customers/{customerId} {
+      allow read, write: if request.auth != null && 
+        request.auth.uid == resource.data.userId &&
+        resource.data.keys().hasAll(['userId', 'name']);
+      allow create: if request.auth != null && 
+        request.auth.uid == request.resource.data.userId &&
+        request.resource.data.keys().hasAll(['userId', 'name']);
+    }
+
+    // Continuar para cada colección...
+  }
+}
+```
+
+### 🛠️ **Reglas para Desarrollo/Testing:**
+
+Si estás en desarrollo y necesitas depurar problemas, puedes usar temporalmente estas reglas más permisivas:
+
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ⚠️ SOLO PARA DESARROLLO - MUY INSEGURO
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
+```
+
+**🚨 IMPORTANTE:** Estas reglas permiten que cualquier usuario autenticado lea/escriba cualquier documento. **NUNCA las uses en producción.**
+
+### 📋 **Cómo aplicar las reglas:**
+
+1. **Ir a Firebase Console:** https://console.firebase.google.com/
+2. **Seleccionar tu proyecto:** epointbohemia
+3. **Navegar a:** Firestore Database > Reglas
+4. **Reemplazar** las reglas existentes con las nuevas
+5. **Hacer clic en "Publicar"**
+
+### 🔍 **Verificar que las reglas funcionan:**
+
+Después de aplicar las reglas, puedes probar:
+
+```javascript
+// En la consola del navegador
+// Esto debería funcionar si estás autenticado
+firebase.firestore().collection('customers').get()
+  .then(snapshot => console.log('Clientes:', snapshot.docs.length))
+  .catch(err => console.error('Error:', err));
+```
+
+### 🐛 **Si tienes problemas con las reglas:**
+
+1. **Revisar logs de Firestore:** En Firebase Console > Firestore > Uso
+2. **Verificar autenticación:** `firebase.auth().currentUser`
+3. **Verificar userId en documentos:** Asegúrate que todos los documentos tengan el campo `userId`
 
 ## Ejecutar el proyecto
 

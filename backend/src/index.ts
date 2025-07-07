@@ -15,6 +15,8 @@ import summaryRoutes from './routes/summary';
 import withdrawalRoutes from './routes/withdrawals';
 import commissionRoutes from './routes/commissions';
 import businessRoutes from './routes/business';
+import customerRoutes from './routes/customers';
+import accountMovementRoutes from './routes/accountMovements';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -49,6 +51,8 @@ app.use('/api/summary', summaryRoutes);
 app.use('/api/withdrawals', withdrawalRoutes);
 app.use('/api/commissions', commissionRoutes);
 app.use('/api/business', businessRoutes);
+app.use('/api/customers', customerRoutes);
+app.use('/api/account-movements', accountMovementRoutes);
 
 // Middleware de manejo de errores
 app.use(errorHandler);

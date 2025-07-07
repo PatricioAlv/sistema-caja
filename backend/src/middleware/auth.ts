@@ -16,7 +16,10 @@ export const authMiddleware = async (
   try {
     const authHeader = req.headers.authorization;
     
+    console.log('🔐 Auth header recibido:', authHeader);
+    
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      console.log('❌ No se encontró header de autorización válido');
       return res.status(401).json({
         success: false,
         error: 'Token de autorización requerido'
@@ -24,9 +27,11 @@ export const authMiddleware = async (
     }
 
     const token = authHeader.substring(7);
+    console.log('🎫 Token extraído (primeros 50 caracteres):', token.substring(0, 50) + '...');
     
     try {
       const decodedToken = await auth.verifyIdToken(token);
+      console.log('✅ Token verificado exitosamente para usuario:', decodedToken.uid);
       req.user = {
         uid: decodedToken.uid,
         email: decodedToken.email

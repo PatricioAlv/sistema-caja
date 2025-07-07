@@ -178,7 +178,7 @@ export const CommissionSettings = ({ onClose, onSaved }: CommissionSettingsProps
                   value={commissions.efectivo}
                   onChange={(e) => handleSimpleCommissionChange('efectivo', e.target.value)}
                   onWheel={(e) => e.currentTarget.blur()}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800 font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800 font-medium placeholder-gray-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
                 <span className="absolute right-3 top-2 text-gray-500">%</span>
               </div>
@@ -199,7 +199,7 @@ export const CommissionSettings = ({ onClose, onSaved }: CommissionSettingsProps
                   value={commissions.transferencia}
                   onChange={(e) => handleSimpleCommissionChange('transferencia', e.target.value)}
                   onWheel={(e) => e.currentTarget.blur()}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800 font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800 font-medium placeholder-gray-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
                 <span className="absolute right-3 top-2 text-gray-500">%</span>
               </div>
@@ -220,7 +220,7 @@ export const CommissionSettings = ({ onClose, onSaved }: CommissionSettingsProps
                   value={commissions.qr}
                   onChange={(e) => handleSimpleCommissionChange('qr', e.target.value)}
                   onWheel={(e) => e.currentTarget.blur()}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800 font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800 font-medium placeholder-gray-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
                 <span className="absolute right-3 top-2 text-gray-500">%</span>
               </div>
@@ -241,7 +241,7 @@ export const CommissionSettings = ({ onClose, onSaved }: CommissionSettingsProps
                   value={commissions.tarjeta_debito}
                   onChange={(e) => handleSimpleCommissionChange('tarjeta_debito', e.target.value)}
                   onWheel={(e) => e.currentTarget.blur()}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800 font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800 font-medium placeholder-gray-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
                 <span className="absolute right-3 top-2 text-gray-500">%</span>
               </div>
@@ -274,7 +274,7 @@ export const CommissionSettings = ({ onClose, onSaved }: CommissionSettingsProps
                             value={commissions.tarjeta_credito[brand.value]?.[installment.value] || 0}
                             onChange={(e) => handleCreditCardCommissionChange(brand.value, installment.value, e.target.value)}
                             onWheel={(e) => e.currentTarget.blur()}
-                            className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800 font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800 font-medium placeholder-gray-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                           />
                           <span className="absolute right-2 top-1 text-xs text-gray-500">%</span>
                         </div>

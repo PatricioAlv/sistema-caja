@@ -24,6 +24,7 @@ import { CommissionSettings } from './CommissionSettings';
 import BusinessSettings from './BusinessSettings';
 import Sidebar from './Sidebar';
 import { DailyClosureModal } from './DailyClosureModal';
+import { CustomerManagement } from './CustomerManagement';
 
 export const Dashboard = () => {
   const { user, signOut, getIdToken } = useAuth();
@@ -37,6 +38,7 @@ export const Dashboard = () => {
   const [showCommissionSettings, setShowCommissionSettings] = useState(false);
   const [showBusinessSettings, setShowBusinessSettings] = useState(false);
   const [showDailyClosure, setShowDailyClosure] = useState(false);
+  const [showCustomerManagement, setShowCustomerManagement] = useState(false);
   const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
 
@@ -102,6 +104,7 @@ export const Dashboard = () => {
         onBusinessSettingsOpen={() => setShowBusinessSettings(true)}
         onCommissionSettingsOpen={() => setShowCommissionSettings(true)}
         onDailyClosureOpen={() => setShowDailyClosure(true)}
+        onCustomerManagementOpen={() => setShowCustomerManagement(true)}
         onSidebarToggle={(expanded) => setSidebarExpanded(expanded)}
       />
 
@@ -264,6 +267,24 @@ export const Dashboard = () => {
           summary={dailySummary}
           selectedDate={selectedDate}
         />
+      )}
+
+      {/* Customer Management Modal */}
+      {showCustomerManagement && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-7xl max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold text-gray-800">Cuentas Corrientes</h2>
+              <button
+                onClick={() => setShowCustomerManagement(false)}
+                className="text-gray-500 hover:text-gray-700 text-xl"
+              >
+                ×
+              </button>
+            </div>
+            <CustomerManagement />
+          </div>
+        </div>
       )}
     </div>
   );

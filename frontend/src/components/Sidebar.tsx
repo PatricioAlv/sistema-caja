@@ -11,13 +11,15 @@ import {
   Users,
   Menu,
   X,
-  FileText
+  FileText,
+  CreditCard
 } from 'lucide-react';
 
 interface SidebarProps {
   onBusinessSettingsOpen: () => void;
   onCommissionSettingsOpen: () => void;
   onDailyClosureOpen?: () => void;
+  onCustomerManagementOpen?: () => void;
   onSidebarToggle?: (isExpanded: boolean) => void;
 }
 
@@ -25,6 +27,7 @@ export default function Sidebar({
   onBusinessSettingsOpen, 
   onCommissionSettingsOpen,
   onDailyClosureOpen,
+  onCustomerManagementOpen,
   onSidebarToggle 
 }: SidebarProps) {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -119,6 +122,17 @@ export default function Sidebar({
       },
       active: false,
       color: 'text-purple-600'
+    },
+    {
+      id: 'customers',
+      icon: CreditCard,
+      label: 'Cuentas Corrientes',
+      onClick: () => {
+        onCustomerManagementOpen?.();
+        closeMobileSidebar();
+      },
+      active: false,
+      color: 'text-indigo-600'
     },
     {
       id: 'users',

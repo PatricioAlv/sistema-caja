@@ -58,14 +58,31 @@
 - [ ] Códigos QR para verificación
 - [ ] Cumplimiento AFIP
 
-### 6. 📊 Cuentas Corrientes
-- [ ] Registro de clientes
-- [ ] Ventas a crédito
-- [ ] Seguimiento de pagos
-- [ ] Estado de cuentas por cliente
+### 6. 📊 Cuentas Corrientes - ✅ COMPLETADO
+- ✅ Registro de clientes
+- ✅ Ventas a crédito
+- ✅ Seguimiento de pagos
+- ✅ Estado de cuentas por cliente
+- ✅ Historial de pagos
+- ✅ Importación desde Excel
+- ✅ Gestión completa de clientes
+- ✅ Interfaz de usuario completa
+- ✅ Backend con API completa
+- ✅ Formularios de venta a crédito y pagos
+- ✅ Integración con el sistema principal
+- ✅ Campo código en movimientos
+- ✅ Tipografía mejorada para mejor legibilidad
+- ✅ Visualización clara de saldos y montos
+- ✅ Ver saldo desde menú de cuentas sin entrar a cada cliente
+- ✅ Corregir colores: saldo en rojo, monto de venta en azul
+- ✅ Permitir borrar el 0 por defecto en campos de montos
+- ✅ Sacar mensaje de prueba "Usuario autenticado"
+- ✅ Mostrar fecha de última entrega junto al saldo
+- ✅ Editar datos del cliente
+- ✅ Corregir carga desde Excel
 - [ ] Alertas de vencimientos
-- [ ] Límites de crédito
-- [ ] Historial de pagos
+- [ ] Límites de crédito con validación
+- [ ] Reportes avanzados de cuentas corrientes
 
 ### 7. 📦 Control de Stock
 - [ ] Inventario de productos
@@ -200,6 +217,6 @@
 
 ---
 
-**Última actualización:** 4 de julio de 2025 - ✅ Completada funcionalidad "Generación de Facturas/Comprobantes"
+**Última actualización:** 5 de julio de 2025 - ✅ Completada funcionalidad "Cuentas Corrientes" con edición de clientes y corrección de importación Excel
 **Autor:** Sistema de Gestión de Caja
 **Repositorio:** https://github.com/PatricioAlv/sistema-caja
