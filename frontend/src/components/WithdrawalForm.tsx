@@ -68,11 +68,11 @@ export const WithdrawalForm = ({ onClose, onWithdrawalCreated }: WithdrawalFormP
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="amount" className="block text-sm font-bold text-gray-900 mb-2">
               Monto *
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600">$</span>
+              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 font-semibold">$</span>
               <input
                 id="amount"
                 name="amount"
@@ -82,7 +82,7 @@ export const WithdrawalForm = ({ onClose, onWithdrawalCreated }: WithdrawalFormP
                 value={formData.amount || ''}
                 onChange={handleInputChange}
                 onWheel={(e) => e.currentTarget.blur()}
-                className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-800 font-medium placeholder-gray-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-900 font-semibold placeholder-gray-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 placeholder="0.00"
                 required
               />
@@ -90,7 +90,7 @@ export const WithdrawalForm = ({ onClose, onWithdrawalCreated }: WithdrawalFormP
           </div>
 
           <div>
-            <label htmlFor="reason" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="reason" className="block text-sm font-bold text-gray-900 mb-2">
               Motivo del Retiro *
             </label>
             <select
@@ -98,7 +98,7 @@ export const WithdrawalForm = ({ onClose, onWithdrawalCreated }: WithdrawalFormP
               name="reason"
               value={formData.reason}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-900"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-900 font-medium"
               required
             >
               {WITHDRAWAL_REASONS.map((reason) => (
@@ -110,7 +110,7 @@ export const WithdrawalForm = ({ onClose, onWithdrawalCreated }: WithdrawalFormP
           </div>
 
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="description" className="block text-sm font-bold text-gray-900 mb-2">
               Descripción
             </label>
             <textarea
@@ -119,7 +119,7 @@ export const WithdrawalForm = ({ onClose, onWithdrawalCreated }: WithdrawalFormP
               value={formData.description}
               onChange={handleInputChange}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-900 font-medium placeholder-gray-500"
               placeholder="Ej: Pago de alquiler, compra de insumos, etc..."
             />
           </div>

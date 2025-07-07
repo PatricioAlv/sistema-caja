@@ -159,26 +159,26 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
         <div className="p-6">
           {/* Resumen de la operación */}
           <div className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Resumen de la Operación</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-3">Resumen de la Operación</h3>
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Descripción:</span>
-                  <span className="font-medium">{operationDetails.description}</span>
+                  <span className="text-sm font-medium text-gray-700">Descripción:</span>
+                  <span className="font-bold text-gray-900">{operationDetails.description}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Monto:</span>
-                  <span className="font-medium">{formatCurrency(operationDetails.amount)}</span>
+                  <span className="text-sm font-medium text-gray-700">Monto:</span>
+                  <span className="font-bold text-gray-900">{formatCurrency(operationDetails.amount)}</span>
                 </div>
                 {operationDetails.commission > 0 && (
                   <div className="flex justify-between">
-                    <span className="text-sm text-gray-600">Comisión:</span>
-                    <span className="font-medium text-red-600">-{formatCurrency(operationDetails.commission)}</span>
+                    <span className="text-sm font-medium text-gray-700">Comisión:</span>
+                    <span className="font-bold text-red-700">-{formatCurrency(operationDetails.commission)}</span>
                   </div>
                 )}
                 <div className="flex justify-between border-t pt-2">
-                  <span className="text-sm font-semibold text-gray-900">Total:</span>
-                  <span className="font-bold text-green-600">{formatCurrency(operationDetails.netAmount)}</span>
+                  <span className="text-sm font-bold text-gray-900">Total:</span>
+                  <span className="font-bold text-green-700">{formatCurrency(operationDetails.netAmount)}</span>
                 </div>
               </div>
             </div>
@@ -186,7 +186,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
 
           {/* Número de comprobante */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-bold text-gray-900 mb-2">
               <Hash className="w-4 h-4 inline mr-1" />
               Número de Comprobante
             </label>
@@ -194,18 +194,18 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
               type="text"
               value={receiptNumber}
               onChange={(e) => setReceiptNumber(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 font-semibold placeholder-gray-500"
               placeholder="Número automático"
             />
           </div>
 
           {/* Datos del cliente */}
           <div className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Datos del Cliente (Opcional)</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-3">Datos del Cliente (Opcional)</h3>
             
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-bold text-gray-900 mb-2">
                   <User className="w-4 h-4 inline mr-1" />
                   Nombre del Cliente
                 </label>
@@ -213,13 +213,13 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
                   type="text"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 font-semibold placeholder-gray-500"
                   placeholder="Nombre completo"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-bold text-gray-900 mb-2">
                   <Phone className="w-4 h-4 inline mr-1" />
                   Teléfono (para WhatsApp)
                 </label>
@@ -227,10 +227,10 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
                   type="tel"
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 font-semibold placeholder-gray-500"
                   placeholder="+54 9 11 1234-5678"
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-800 mt-1 font-semibold">
                   Ingrese el número con código de país para enviar por WhatsApp
                 </p>
               </div>

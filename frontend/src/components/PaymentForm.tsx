@@ -89,7 +89,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({ customer, onPaymentCre
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-bold text-gray-900 mb-1">
               <FileText size={16} className="inline mr-1" />
               Descripción
             </label>
@@ -97,13 +97,13 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({ customer, onPaymentCre
               type="text"
               value={formData.description}
               onChange={(e) => setFormData({...formData, description: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900 placeholder-gray-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900 font-medium placeholder-gray-500"
               placeholder="Ej: Pago en efectivo"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-bold text-gray-900 mb-1">
               <DollarSign size={16} className="inline mr-1" />
               Monto *
             </label>
@@ -114,13 +114,13 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({ customer, onPaymentCre
               step="0.01"
               value={formData.amount}
               onChange={(e) => setFormData({...formData, amount: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900 placeholder-gray-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900 font-semibold placeholder-gray-500"
               placeholder="0.00"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-bold text-gray-900 mb-1">
               <Calendar size={16} className="inline mr-1" />
               Fecha
             </label>
@@ -128,7 +128,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({ customer, onPaymentCre
               type="date"
               value={formData.date}
               onChange={(e) => setFormData({...formData, date: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900 placeholder-gray-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900 font-medium placeholder-gray-500"
             />
           </div>
 

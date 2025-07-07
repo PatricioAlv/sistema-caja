@@ -537,7 +537,7 @@ export const CustomerManagement: React.FC = () => {
             <form onSubmit={handleCreateCustomer}>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-bold text-gray-900 mb-1">
                     Nombre *
                   </label>
                   <input
@@ -545,55 +545,55 @@ export const CustomerManagement: React.FC = () => {
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 font-medium placeholder-gray-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-bold text-gray-900 mb-1">
                     Email
                   </label>
                   <input
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({...formData, email: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 font-medium placeholder-gray-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-bold text-gray-900 mb-1">
                     Teléfono
                   </label>
                   <input
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 font-medium placeholder-gray-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-bold text-gray-900 mb-1">
                     Dirección
                   </label>
                   <input
                     type="text"
                     value={formData.address}
                     onChange={(e) => setFormData({...formData, address: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 font-medium placeholder-gray-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-bold text-gray-900 mb-1">
                     CUIT/DNI
                   </label>
                   <input
                     type="text"
                     value={formData.taxId}
                     onChange={(e) => setFormData({...formData, taxId: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 font-medium placeholder-gray-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-bold text-gray-900 mb-1">
                     Límite de Crédito
                   </label>
                   <input
@@ -602,18 +602,18 @@ export const CustomerManagement: React.FC = () => {
                     step="0.01"
                     value={formData.creditLimit}
                     onChange={(e) => setFormData({...formData, creditLimit: parseFloat(e.target.value) || 0})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 font-semibold placeholder-gray-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-bold text-gray-900 mb-1">
                     Notas
                   </label>
                   <textarea
                     value={formData.notes}
                     onChange={(e) => setFormData({...formData, notes: e.target.value})}
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 font-medium placeholder-gray-500"
                   />
                 </div>
               </div>
@@ -711,7 +711,7 @@ export const CustomerManagement: React.FC = () => {
             
             <form onSubmit={handleUpdateCustomer} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-bold text-gray-900 mb-1">
                   Nombre *
                 </label>
                 <input
@@ -719,55 +719,55 @@ export const CustomerManagement: React.FC = () => {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 font-medium placeholder-gray-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-bold text-gray-900 mb-1">
                   Email
                 </label>
                 <input
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 font-medium placeholder-gray-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-bold text-gray-900 mb-1">
                   Teléfono
                 </label>
                 <input
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 font-medium placeholder-gray-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-bold text-gray-900 mb-1">
                   Dirección
                 </label>
                 <input
                   type="text"
                   value={formData.address}
                   onChange={(e) => setFormData({...formData, address: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 font-medium placeholder-gray-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-bold text-gray-900 mb-1">
                   CUIT/DNI
                 </label>
                 <input
                   type="text"
                   value={formData.taxId}
                   onChange={(e) => setFormData({...formData, taxId: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 font-medium placeholder-gray-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-bold text-gray-900 mb-1">
                   Límite de Crédito
                 </label>
                 <input
@@ -776,18 +776,18 @@ export const CustomerManagement: React.FC = () => {
                   step="0.01"
                   value={formData.creditLimit}
                   onChange={(e) => setFormData({...formData, creditLimit: parseFloat(e.target.value) || 0})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 font-semibold placeholder-gray-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-bold text-gray-900 mb-1">
                   Notas
                 </label>
                 <textarea
                   value={formData.notes}
                   onChange={(e) => setFormData({...formData, notes: e.target.value})}
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 font-medium placeholder-gray-500"
                 />
               </div>
               

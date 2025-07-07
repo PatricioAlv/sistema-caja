@@ -121,7 +121,7 @@ export const SaleForm = ({ onClose, onSaleCreated }: SaleFormProps) => {
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="description" className="block text-sm font-bold text-gray-900 mb-2">
               Descripción
             </label>
             <textarea
@@ -130,18 +130,18 @@ export const SaleForm = ({ onClose, onSaleCreated }: SaleFormProps) => {
               value={formData.description}
               onChange={handleInputChange}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 font-medium placeholder-gray-500"
               placeholder="Ej: Venta de producto X, servicio Y..."
               required
             />
           </div>
 
           <div>
-            <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="amount" className="block text-sm font-bold text-gray-900 mb-2">
               Monto
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600">$</span>
+              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 font-semibold">$</span>
               <input
                 id="amount"
                 name="amount"
@@ -151,7 +151,7 @@ export const SaleForm = ({ onClose, onSaleCreated }: SaleFormProps) => {
                 value={formData.amount || ''}
                 onChange={handleInputChange}
                 onWheel={(e) => e.currentTarget.blur()}
-                className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800 font-medium placeholder-gray-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 font-semibold placeholder-gray-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 placeholder="0.00"
                 required
               />
@@ -159,7 +159,7 @@ export const SaleForm = ({ onClose, onSaleCreated }: SaleFormProps) => {
           </div>
 
           <div>
-            <label htmlFor="paymentMethod" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="paymentMethod" className="block text-sm font-bold text-gray-900 mb-2">
               Medio de Pago
             </label>
             <select
@@ -167,7 +167,7 @@ export const SaleForm = ({ onClose, onSaleCreated }: SaleFormProps) => {
               name="paymentMethod"
               value={formData.paymentMethod}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 font-medium"
               required
             >
               {PAYMENT_METHODS.map((method) => (
@@ -182,7 +182,7 @@ export const SaleForm = ({ onClose, onSaleCreated }: SaleFormProps) => {
           {formData.paymentMethod === 'tarjeta_credito' && (
             <>
               <div>
-                <label htmlFor="cardBrand" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="cardBrand" className="block text-sm font-bold text-gray-900 mb-2">
                   Marca de Tarjeta
                 </label>
                 <select
@@ -190,7 +190,7 @@ export const SaleForm = ({ onClose, onSaleCreated }: SaleFormProps) => {
                   name="cardBrand"
                   value={formData.cardBrand || ''}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 font-medium"
                   required
                 >
                   <option value="">Seleccionar marca...</option>
@@ -203,7 +203,7 @@ export const SaleForm = ({ onClose, onSaleCreated }: SaleFormProps) => {
               </div>
 
               <div>
-                <label htmlFor="installments" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="installments" className="block text-sm font-bold text-gray-900 mb-2">
                   Cantidad de Cuotas
                 </label>
                 <select
@@ -211,7 +211,7 @@ export const SaleForm = ({ onClose, onSaleCreated }: SaleFormProps) => {
                   name="installments"
                   value={formData.installments || ''}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 font-medium"
                   required
                 >
                   <option value="">Seleccionar cuotas...</option>
