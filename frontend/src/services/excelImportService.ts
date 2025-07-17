@@ -1,65 +1,67 @@
-import * as XLSX from 'xlsx';
+import * as ExcelJS from 'exceljs';
 import { ImportedMovement, ImportCustomerData } from '@/types';
 
 export class ExcelImportService {
   static async importCustomerData(file: File): Promise<ImportCustomerData> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const workbook = new ExcelJS.Workbook();
+      await workbook.xlsx.load(arrayBuffer);
       
-      reader.onload = (e) => {
-        try {
-          const data = new Uint8Array(e.target?.result as ArrayBuffer);
-          const workbook = XLSX.read(data, { type: 'array' });
-          const sheetName = workbook.SheetNames[0];
-          const worksheet = workbook.Sheets[sheetName];
-          
-          // Convertir a JSON
-          const jsonData: unknown[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-          
-          // Buscar las columnas por contenido (más flexible)
-          const headers = jsonData[0] || [];
-          const columnMap = this.mapColumns(headers);
-          
-          // Procesar datos desde la fila 1 (saltando headers)
-          const movements: ImportedMovement[] = [];
-          
-          for (let i = 1; i < jsonData.length; i++) {
-            const row = jsonData[i];
-            if (!row || row.length === 0) continue;
-            
-            const movement: ImportedMovement = {
-              fecha: this.parseDate(row[columnMap.fecha]),
-              descripcion: String(row[columnMap.descripcion] || '').trim(),
-              codigo: String(row[columnMap.codigo] || '').trim(),
-              precio: this.parseNumber(row[columnMap.precio]),
-              saldo: this.parseNumber(row[columnMap.saldo])
-            };
-            
-            // Solo agregar si tiene datos válidos
-            if (movement.descripcion || movement.precio !== 0) {
-              movements.push(movement);
-            }
-          }
-          
-          // Obtener nombre del cliente del nombre del archivo
-          const customerName = file.name
-            .replace(/\.(xlsx|xls)$/i, '')
-            .replace(/[_-]/g, ' ')
-            .trim();
-          
-          resolve({
-            customerName,
-            movements: movements.sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime())
-          });
-        } catch (error) {
-          console.error('Error procesando Excel:', error);
-          reject(new Error(`Error procesando archivo: ${error instanceof Error ? error.message : 'Error desconocido'}`));
+      const worksheet = workbook.worksheets[0];
+      if (!worksheet) {
+        throw new Error('No se encontró ninguna hoja en el archivo Excel');
+      }
+      
+      // Convertir a JSON
+      const jsonData: unknown[][] = [];
+      worksheet.eachRow((row) => {
+        const rowData: unknown[] = [];
+        row.eachCell((cell, colNumber) => {
+          rowData[colNumber - 1] = cell.value;
+        });
+        jsonData.push(rowData);
+      });
+      
+      // Buscar las columnas por contenido (más flexible)
+      const headers = jsonData[0] || [];
+      const columnMap = this.mapColumns(headers);
+      
+      // Procesar datos desde la fila 1 (saltando headers)
+      const movements: ImportedMovement[] = [];
+      
+      for (let i = 1; i < jsonData.length; i++) {
+        const row = jsonData[i];
+        if (!row || row.length === 0) continue;
+        
+        const movement: ImportedMovement = {
+          fecha: this.parseDate(row[columnMap.fecha]),
+          descripcion: String(row[columnMap.descripcion] || '').trim(),
+          codigo: String(row[columnMap.codigo] || '').trim(),
+          precio: this.parseNumber(row[columnMap.precio]),
+          saldo: this.parseNumber(row[columnMap.saldo])
+        };
+        
+        // Solo agregar si tiene datos válidos
+        if (movement.descripcion || movement.precio !== 0) {
+          movements.push(movement);
         }
-      };
+      }
       
-      reader.onerror = () => reject(new Error('Error leyendo archivo'));
-      reader.readAsArrayBuffer(file);
-    });
+      // Obtener nombre del cliente del nombre del archivo
+      const customerName = file.name
+        .replace(/\.(xlsx|xls)$/i, '')
+        .replace(/[_-]/g, ' ')
+        .trim();
+      
+      return {
+        customerName,
+        movements: movements.sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime())
+      };
+    } catch (error) {
+      console.error('Error procesando Excel:', error);
+      throw new Error(`Error procesando archivo: ${error instanceof Error ? error.message : 'Error desconocido'}`);
+    }
   }
   
   private static mapColumns(headers: unknown[]): Record<string, number> {

@@ -217,6 +217,15 @@
 
 ---
 
-**Última actualización:** 5 de julio de 2025 - ✅ Completada funcionalidad "Cuentas Corrientes" con edición de clientes y corrección de importación Excel
+**Última actualización:** 16 de julio de 2025 - ✅ Migración de seguridad: Reemplazada librería xlsx vulnerable por ExcelJS
 **Autor:** Sistema de Gestión de Caja
 **Repositorio:** https://github.com/PatricioAlv/sistema-caja
+
+## 🔐 ACTUALIZACIONES DE SEGURIDAD
+
+### Julio 2025 - Migración de xlsx a ExcelJS
+- ✅ **Vulnerabilidad solucionada:** Eliminada librería xlsx v0.18.5 con vulnerabilidades de seguridad alta
+- ✅ **Nueva implementación:** Migración a ExcelJS para importación de archivos Excel
+- ✅ **Compatibilidad mantenida:** Funcionalidad de importación de clientes desde Excel sigue funcionando
+- ✅ **Mejoras de seguridad:** Sin vulnerabilidades detectadas en audit npm
+- ✅ **Arquitectura moderna:** Uso de async/await nativo en lugar de FileReader con callbacks
