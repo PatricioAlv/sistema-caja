@@ -16,8 +16,57 @@ export interface BusinessConfig {
   updatedAt: string;
 }
 
-// Tipos para las ventas
+// Tipos para los items de venta
+export interface SaleItem {
+  id: string;
+  code: string;
+  name: string;
+  price: number;
+  quantity: number;
+  subtotal: number;
+}
+
+// Tipos para medios de pago en una venta
+export interface PaymentMethodSale {
+  type: PaymentMethod;
+  amount: number;
+  brand?: CardBrand;
+  installments?: number;
+  commission: number;
+}
+
+// Legacy: Tipos para las ventas (formato anterior - mantener compatibilidad)
+export interface SaleLegacy {
+  id: string;
+  date: string; // ISO string
+  description: string;
+  cashAmount: number;
+  digitalAmount: number;
+  commissionAmount: number;
+  paymentMethod: PaymentMethod;
+  cardBrand?: CardBrand; // Para tarjetas de crédito
+  installments?: number; // Cantidad de cuotas (1, 3, 6, 12)
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Tipos para las ventas (actualizado - nuevo formato)
 export interface Sale {
+  id: string;
+  date: string; // ISO string
+  items: SaleItem[];
+  paymentMethods: PaymentMethodSale[];
+  totalAmount: number;
+  totalCommission: number;
+  netAmount: number; // Total menos comisiones
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Legacy: Mantener compatibilidad temporal
+export interface SaleLegacy {
   id: string;
   date: string; // ISO string
   description: string;

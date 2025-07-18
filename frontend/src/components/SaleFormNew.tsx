@@ -220,7 +220,7 @@ export const SaleForm = ({ onClose, onSaleCreated }: SaleFormProps) => {
                         type="text"
                         value={item.code}
                         onChange={(e) => updateItem(item.id, 'code', e.target.value)}
-                        className="w-full p-2 border border-gray-300 rounded-md text-sm text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full p-2 border border-gray-300 rounded-md text-sm"
                         placeholder="SKU"
                       />
                     </div>
@@ -230,7 +230,7 @@ export const SaleForm = ({ onClose, onSaleCreated }: SaleFormProps) => {
                         type="text"
                         value={item.name}
                         onChange={(e) => updateItem(item.id, 'name', e.target.value)}
-                        className="w-full p-2 border border-gray-300 rounded-md text-sm text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full p-2 border border-gray-300 rounded-md text-sm"
                         placeholder="Nombre del artículo"
                         required
                       />
@@ -242,7 +242,7 @@ export const SaleForm = ({ onClose, onSaleCreated }: SaleFormProps) => {
                         step="0.01"
                         value={item.price || ''}
                         onChange={(e) => updateItem(item.id, 'price', parseFloat(e.target.value) || 0)}
-                        className="w-full p-2 border border-gray-300 rounded-md text-sm text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full p-2 border border-gray-300 rounded-md text-sm"
                         placeholder="0.00"
                         required
                       />
@@ -254,12 +254,12 @@ export const SaleForm = ({ onClose, onSaleCreated }: SaleFormProps) => {
                         min="1"
                         value={item.quantity || ''}
                         onChange={(e) => updateItem(item.id, 'quantity', parseInt(e.target.value) || 1)}
-                        className="w-full p-2 border border-gray-300 rounded-md text-sm text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full p-2 border border-gray-300 rounded-md text-sm"
                         required
                       />
                     </div>
                     <div className="col-span-1 flex items-end">
-                      <div className="text-sm font-bold text-gray-900 mb-2 bg-green-100 px-2 py-1 rounded">
+                      <div className="text-sm font-medium text-gray-900 mb-2">
                         ${item.subtotal.toFixed(2)}
                       </div>
                     </div>
@@ -318,7 +318,7 @@ export const SaleForm = ({ onClose, onSaleCreated }: SaleFormProps) => {
                         <select
                           value={method.type}
                           onChange={(e) => updatePaymentMethod(index, 'type', e.target.value)}
-                          className="w-full p-2 border border-gray-300 rounded-md text-sm text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full p-2 border border-gray-300 rounded-md text-sm"
                         >
                           <option value="efectivo">Efectivo</option>
                           <option value="transferencia">Transferencia</option>
@@ -335,7 +335,7 @@ export const SaleForm = ({ onClose, onSaleCreated }: SaleFormProps) => {
                           step="0.01"
                           value={method.amount || ''}
                           onChange={(e) => updatePaymentMethod(index, 'amount', parseFloat(e.target.value) || 0)}
-                          className="w-full p-2 border border-gray-300 rounded-md text-sm text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full p-2 border border-gray-300 rounded-md text-sm"
                           placeholder="0.00"
                           required
                         />
@@ -348,7 +348,7 @@ export const SaleForm = ({ onClose, onSaleCreated }: SaleFormProps) => {
                             <select
                               value={method.brand || ''}
                               onChange={(e) => updatePaymentMethod(index, 'brand', e.target.value)}
-                              className="w-full p-2 border border-gray-300 rounded-md text-sm text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              className="w-full p-2 border border-gray-300 rounded-md text-sm"
                               required
                             >
                               <option value="">Seleccionar</option>
@@ -365,7 +365,7 @@ export const SaleForm = ({ onClose, onSaleCreated }: SaleFormProps) => {
                               <select
                                 value={method.installments || ''}
                                 onChange={(e) => updatePaymentMethod(index, 'installments', parseInt(e.target.value))}
-                                className="w-full p-2 border border-gray-300 rounded-md text-sm text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full p-2 border border-gray-300 rounded-md text-sm"
                                 required
                               >
                                 <option value="">Seleccionar</option>
@@ -380,7 +380,7 @@ export const SaleForm = ({ onClose, onSaleCreated }: SaleFormProps) => {
                       )}
                       
                       <div className="col-span-2 flex items-end">
-                        <div className="text-sm font-medium text-red-700 mb-2 bg-red-50 px-2 py-1 rounded">
+                        <div className="text-sm text-gray-600 mb-2">
                           Comisión: ${method.commission.toFixed(2)}
                         </div>
                       </div>
@@ -403,27 +403,27 @@ export const SaleForm = ({ onClose, onSaleCreated }: SaleFormProps) => {
             </div>
 
             {/* Resumen */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="bg-blue-50 rounded-lg p-4">
               <h4 className="font-medium text-gray-900 mb-3">Resumen de la Venta</h4>
-              <div className="grid grid-cols-2 gap-4 text-sm text-gray-800">
+              <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <div className="flex justify-between mb-1">
-                    <span className="text-gray-700">Total Artículos:</span>
-                    <span className="font-medium text-gray-900">${getTotalAmount().toFixed(2)}</span>
+                  <div className="flex justify-between">
+                    <span>Total Artículos:</span>
+                    <span className="font-medium">${getTotalAmount().toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-700">Total Pagos:</span>
-                    <span className="font-medium text-gray-900">${getTotalPayments().toFixed(2)}</span>
+                    <span>Total Pagos:</span>
+                    <span className="font-medium">${getTotalPayments().toFixed(2)}</span>
                   </div>
                 </div>
                 <div>
-                  <div className="flex justify-between mb-1">
-                    <span className="text-gray-700">Total Comisiones:</span>
-                    <span className="font-medium text-red-700">-${getTotalCommissions().toFixed(2)}</span>
+                  <div className="flex justify-between">
+                    <span>Total Comisiones:</span>
+                    <span className="font-medium text-red-600">-${getTotalCommissions().toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between border-t border-blue-300 pt-1">
-                    <span className="font-semibold text-gray-900">Neto:</span>
-                    <span className="font-semibold text-green-700">${(getTotalAmount() - getTotalCommissions()).toFixed(2)}</span>
+                  <div className="flex justify-between border-t pt-1">
+                    <span className="font-semibold">Neto:</span>
+                    <span className="font-semibold text-green-600">${(getTotalAmount() - getTotalCommissions()).toFixed(2)}</span>
                   </div>
                 </div>
               </div>

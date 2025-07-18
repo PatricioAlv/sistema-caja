@@ -1,5 +1,5 @@
 import { firestore } from '../config/firebase';
-import { Sale, CreateSaleData, SalesFilters, PaymentMethod } from '../../../shared/types';
+import { SaleLegacy, CreateSaleData, SalesFilters, PaymentMethod } from '../../../shared/types';
 import { format, startOfDay, endOfDay } from 'date-fns';
 import { CommissionService } from './commissionService';
 
@@ -29,7 +29,7 @@ export class SalesService {
     };
   }
 
-  async createSale(data: CreateSaleData & { userId: string }): Promise<Sale> {
+  async createSale(data: CreateSaleData & { userId: string }): Promise<SaleLegacy> {
     const now = new Date();
     let saleDate: string;
     
@@ -50,7 +50,7 @@ export class SalesService {
       data.installments
     );
     
-    const saleData: Omit<Sale, 'id'> = {
+    const saleData: Omit<SaleLegacy, 'id'> = {
       date: saleDate,
       description: data.description,
       ...amounts,
@@ -76,7 +76,7 @@ export class SalesService {
     };
   }
 
-  async getSales(filters: SalesFilters): Promise<Sale[]> {
+  async getSales(filters: SalesFilters): Promise<SaleLegacy[]> {
     // Consulta simplificada para evitar índices compuestos
     let query = this.salesCollection.where('userId', '==', filters.userId);
     
@@ -90,7 +90,7 @@ export class SalesService {
     let sales = snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
-    } as Sale));
+    } as SaleLegacy));
 
     // Filtrar en memoria para evitar índices compuestos
     if (filters.startDate) {
@@ -111,14 +111,14 @@ export class SalesService {
     return sales;
   }
 
-  async getSaleById(id: string, userId: string): Promise<Sale | null> {
+  async getSaleById(id: string, userId: string): Promise<SaleLegacy | null> {
     const doc = await this.salesCollection.doc(id).get();
     
     if (!doc.exists) {
       return null;
     }
 
-    const data = doc.data() as Omit<Sale, 'id'>;
+    const data = doc.data() as Omit<SaleLegacy, 'id'>;
     
     // Verificar que la venta pertenezca al usuario
     if (data.userId !== userId) {
@@ -128,10 +128,10 @@ export class SalesService {
     return {
       id: doc.id,
       ...data
-    };
+    } as SaleLegacy;
   }
 
-  async updateSale(id: string, updates: Partial<CreateSaleData>, userId: string): Promise<Sale | null> {
+  async updateSale(id: string, updates: Partial<CreateSaleData>, userId: string): Promise<SaleLegacy | null> {
     const existingSale = await this.getSaleById(id, userId);
     
     if (!existingSale) {
@@ -195,7 +195,7 @@ export class SalesService {
     return true;
   }
 
-  async getSalesByDateRange(startDate: string, endDate: string, userId: string): Promise<Sale[]> {
+  async getSalesByDateRange(startDate: string, endDate: string, userId: string): Promise<SaleLegacy[]> {
     return this.getSales({
       startDate,
       endDate,

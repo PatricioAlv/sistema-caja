@@ -36,5 +36,9 @@
     "express",
     "firebase",
     "api"
-  ]
+  ],
+  "ts-node": {
+    "esm": false,
+    "experimentalSpecifierResolution": "node"
+  }
 }

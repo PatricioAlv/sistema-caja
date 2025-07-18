@@ -19,7 +19,49 @@ export interface BusinessConfig {
 // Alias para compatibilidad con PDF service
 export type Business = BusinessConfig;
 
-// Tipos para las ventas
+// Tipos para los items de venta
+export interface SaleItem {
+  id: string;
+  code: string;
+  name: string;
+  price: number;
+  quantity: number;
+  subtotal: number;
+}
+
+// Tipos para medios de pago en una venta
+export interface PaymentMethodSale {
+  type: PaymentMethod;
+  amount: number;
+  brand?: CardBrand;
+  installments?: number;
+  commission: number;
+}
+
+// Tipos para las ventas (versión nueva)
+export interface SaleNew {
+  id: string;
+  date: string; // ISO string
+  items: SaleItem[];
+  paymentMethods: PaymentMethodSale[];
+  totalAmount: number;
+  totalCommission: number;
+  netAmount: number; // Total menos comisiones
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Datos para crear una nueva venta (versión nueva)
+export interface CreateSaleDataNew {
+  items: SaleItem[];
+  paymentMethods: PaymentMethodSale[];
+  totalAmount: number;
+  totalCommission: number;
+  netAmount: number;
+}
+
+// Tipos para las ventas (legacy - mantener compatibilidad)
 export interface Sale {
   id: string;
   date: string; // ISO string

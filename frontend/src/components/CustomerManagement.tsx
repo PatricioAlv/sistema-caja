@@ -18,15 +18,10 @@ export const CustomerManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
-  // Nuevo estado para vista de saldos
-  const [showBalanceView, setShowBalanceView] = useState(false);
-  const [customersWithBalances, setCustomersWithBalances] = useState<Array<{
-    customer: Customer;
-    balance: number;
-    lastDeliveryDate: string | null;
-  }>>([]);
-  const [balancesLoading, setBalancesLoading] = useState(false);
+
+  // Estados para saldos de clientes
+  const [customerBalances, setCustomerBalances] = useState<{[key: string]: number}>({});
+  const [customerLastPayments, setCustomerLastPayments] = useState<{[key: string]: string | null}>({});
 
   // Estados para edición de cliente
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
@@ -86,10 +81,9 @@ export const CustomerManagement: React.FC = () => {
     }
   }, [getIdToken, user]);
 
-  // Función para cargar saldos de todos los clientes
-  const loadCustomersWithBalances = async () => {
+  // Función para cargar saldos de clientes
+  const loadCustomerBalances = useCallback(async () => {
     try {
-      setBalancesLoading(true);
       const token = await getIdToken();
       
       const response = await fetch('/api/customers/balances', {
@@ -104,19 +98,27 @@ export const CustomerManagement: React.FC = () => {
       }
       
       const data = await response.json();
-      setCustomersWithBalances(data);
+      
+      // Convertir array a objeto para acceso fácil por ID
+      const balances: {[key: string]: number} = {};
+      const lastPayments: {[key: string]: string | null} = {};
+      
+      data.forEach((item: {customer: Customer, balance: number, lastPaymentDate: string | null}) => {
+        balances[item.customer.id] = item.balance;
+        lastPayments[item.customer.id] = item.lastPaymentDate;
+      });
+      
+      setCustomerBalances(balances);
+      setCustomerLastPayments(lastPayments);
     } catch (error) {
-      console.error('Error loading balances:', error);
-      setError('Error al cargar saldos de clientes');
-    } finally {
-      setBalancesLoading(false);
+      console.error('Error loading customer balances:', error);
     }
-  };
+  }, [getIdToken]);
 
   useEffect(() => {
     loadCustomers();
-    loadCustomersWithBalances(); // Cargar saldos al iniciar
-  }, [loadCustomers]);
+    loadCustomerBalances();
+  }, [loadCustomers, loadCustomerBalances]);
 
   const handleCreateCustomer = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -167,6 +169,7 @@ export const CustomerManagement: React.FC = () => {
       }
       
       await loadCustomers();
+      await loadCustomerBalances();
       setShowCreateForm(false);
       setFormData({
         name: '',
@@ -273,6 +276,44 @@ export const CustomerManagement: React.FC = () => {
     customer.phone?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Ordenar clientes por fecha de último pago (más retrasados primero)
+  const sortedCustomers = [...filteredCustomers].sort((a, b) => {
+    const dateA = customerLastPayments[a.id];
+    const dateB = customerLastPayments[b.id];
+    
+    // Clientes sin pagos van primero (más críticos)
+    if (!dateA && !dateB) return 0;
+    if (!dateA) return -1;
+    if (!dateB) return 1;
+    
+    // Ordenar por fecha: más antigua primero (más retrasados)
+    return new Date(dateA).getTime() - new Date(dateB).getTime();
+  });
+
+  // Función para calcular días desde el último pago y obtener color
+  const getPaymentStatus = (customerId: string) => {
+    const lastPayment = customerLastPayments[customerId];
+    const balance = customerBalances[customerId] || 0;
+    
+    if (!lastPayment) {
+      return balance > 0 ? { color: 'text-red-700 bg-red-50', text: 'Sin pagos', days: Infinity } : { color: 'text-gray-600', text: 'Sin pagos', days: 0 };
+    }
+    
+    const daysSincePayment = Math.floor((new Date().getTime() - new Date(lastPayment).getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (balance <= 0) {
+      return { color: 'text-gray-600', text: new Date(lastPayment).toLocaleDateString('es-ES'), days: daysSincePayment };
+    }
+    
+    if (daysSincePayment > 30) {
+      return { color: 'text-red-700 bg-red-50', text: new Date(lastPayment).toLocaleDateString('es-ES'), days: daysSincePayment };
+    } else if (daysSincePayment > 15) {
+      return { color: 'text-orange-700 bg-orange-50', text: new Date(lastPayment).toLocaleDateString('es-ES'), days: daysSincePayment };
+    } else {
+      return { color: 'text-yellow-700 bg-yellow-50', text: new Date(lastPayment).toLocaleDateString('es-ES'), days: daysSincePayment };
+    }
+  };
+
   // const calculateBalance = (_customer: Customer) => {
   //   // Por ahora retornamos 0, después se calculará desde los movimientos
   //   return 0;
@@ -312,22 +353,6 @@ export const CustomerManagement: React.FC = () => {
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold text-gray-800">Gestión de Clientes</h2>
         <div className="flex gap-2">
-          <button
-            onClick={() => {
-              setShowBalanceView(!showBalanceView);
-              if (!showBalanceView) {
-                loadCustomersWithBalances();
-              }
-            }}
-            className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
-              showBalanceView 
-                ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
-          >
-            <DollarSign size={20} />
-            {showBalanceView ? 'Ver Lista' : 'Ver Saldos'}
-          </button>
           <button
             onClick={() => setShowImport(true)}
             className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
@@ -371,76 +396,8 @@ export const CustomerManagement: React.FC = () => {
         </div>
       )}
 
-      {/* Vista de Saldos */}
-      {showBalanceView && user && (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="px-6 py-4 bg-blue-50 border-b">
-            <h3 className="text-lg font-semibold text-gray-800">Saldos de Clientes</h3>
-          </div>
-          {balancesLoading ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                      Cliente
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                      Saldo
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                      Última Entrega
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                      Contacto
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                      Acciones
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {customersWithBalances.map(({ customer, balance, lastDeliveryDate }) => (
-                    <tr key={customer.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-bold text-gray-800">{customer.name}</div>
-                        <div className="text-sm text-gray-500">{customer.taxId}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`text-sm font-bold ${balance > 0 ? 'text-red-700' : 'text-green-700'}`}>
-                          ${balance.toFixed(2)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                        {lastDeliveryDate ? new Date(lastDeliveryDate).toLocaleDateString() : 'Sin entregas'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                        <div>{customer.phone}</div>
-                        <div className="text-xs text-gray-500">{customer.email}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button
-                          onClick={() => setSelectedCustomer(customer)}
-                          className="text-blue-600 hover:text-blue-900 mr-3"
-                        >
-                          Ver Estado
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Customers Table - Solo mostrar si no está en vista de saldos */}
-      {!showBalanceView && user && (
+      {/* Customers Table */}
+      {user && (
         <div className="bg-white rounded-lg shadow overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -455,7 +412,10 @@ export const CustomerManagement: React.FC = () => {
                 Saldo
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Límite de Crédito
+                <div className="flex items-center gap-1">
+                  Última Entrega
+                  <span className="text-red-500" title="Ordenado por prioridad: más retrasados primero">↑</span>
+                </div>
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Acciones
@@ -463,7 +423,7 @@ export const CustomerManagement: React.FC = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {filteredCustomers.map((customer) => (
+            {sortedCustomers.map((customer) => (
               <tr key={customer.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex flex-col">
@@ -484,12 +444,28 @@ export const CustomerManagement: React.FC = () => {
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="text-sm font-medium text-gray-600">
-                    $0.00
+                  <span className={`text-sm font-medium ${
+                    (customerBalances[customer.id] || 0) > 0 ? 'text-red-600' : 'text-green-600'
+                  }`}>
+                    ${(customerBalances[customer.id] || 0).toFixed(2)}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  ${customer.creditLimit?.toFixed(2) || '0.00'}
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {(() => {
+                    const status = getPaymentStatus(customer.id);
+                    return (
+                      <div className="flex flex-col">
+                        <span className={`text-sm font-medium px-2 py-1 rounded ${status.color}`}>
+                          {status.text}
+                        </span>
+                        {status.days > 0 && status.days !== Infinity && (
+                          <span className="text-xs text-gray-500 mt-1">
+                            {status.days} días atrás
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex items-center gap-2">
@@ -594,19 +570,6 @@ export const CustomerManagement: React.FC = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-900 mb-1">
-                    Límite de Crédito
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={formData.creditLimit}
-                    onChange={(e) => setFormData({...formData, creditLimit: parseFloat(e.target.value) || 0})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 font-semibold placeholder-gray-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold text-gray-900 mb-1">
                     Notas
                   </label>
                   <textarea
@@ -689,6 +652,7 @@ export const CustomerManagement: React.FC = () => {
           customer={selectedCustomer}
           onClose={() => setSelectedCustomer(null)}
           getIdToken={getIdToken}
+          onDataChanged={loadCustomerBalances} // Callback para recargar saldos
         />
       )}
 
@@ -768,19 +732,6 @@ export const CustomerManagement: React.FC = () => {
               </div>
               <div>
                 <label className="block text-sm font-bold text-gray-900 mb-1">
-                  Límite de Crédito
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={formData.creditLimit}
-                  onChange={(e) => setFormData({...formData, creditLimit: parseFloat(e.target.value) || 0})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 font-semibold placeholder-gray-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-bold text-gray-900 mb-1">
                   Notas
                 </label>
                 <textarea
@@ -829,9 +780,10 @@ interface CustomerAccountViewProps {
   customer: Customer;
   onClose: () => void;
   getIdToken: () => Promise<string | null>;
+  onDataChanged?: () => void; // Callback opcional para cuando cambian los datos
 }
 
-const CustomerAccountView: React.FC<CustomerAccountViewProps> = ({ customer, onClose, getIdToken }) => {
+const CustomerAccountView: React.FC<CustomerAccountViewProps> = ({ customer, onClose, getIdToken, onDataChanged }) => {
   const [movements, setMovements] = useState<AccountMovement[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreditSaleForm, setShowCreditSaleForm] = useState(false);
@@ -908,6 +860,15 @@ const CustomerAccountView: React.FC<CustomerAccountViewProps> = ({ customer, onC
     }
   };
 
+  // Función para recargar tanto movimientos como saldos
+  const reloadData = async () => {
+    await reloadMovements();
+    // Notificar al componente padre para recargar saldos
+    if (onDataChanged) {
+      onDataChanged();
+    }
+  };
+
   const calculateBalance = () => {
     // Validar que movements es un array antes de usar reduce
     if (!Array.isArray(movements)) {
@@ -916,6 +877,8 @@ const CustomerAccountView: React.FC<CustomerAccountViewProps> = ({ customer, onC
     }
     
     return movements.reduce((balance, movement) => {
+      // sale = venta a crédito = aumenta la deuda del cliente (+)
+      // payment = pago del cliente = disminuye la deuda del cliente (-)
       return movement.type === 'sale' ? balance + movement.amount : balance - movement.amount;
     }, 0);
   };
@@ -962,8 +925,6 @@ const CustomerAccountView: React.FC<CustomerAccountViewProps> = ({ customer, onC
               <p className="font-medium">Saldo Actual: <span className={`font-bold ${calculateBalance() >= 0 ? 'text-green-700' : 'text-red-700'}`}>
                 ${calculateBalance().toFixed(2)}
               </span></p>
-              <p className="font-medium">Límite de Crédito: <span className="font-semibold text-gray-800">${customer.creditLimit?.toFixed(2) || '0.00'}</span></p>
-              <p className="font-medium">Disponible: <span className="font-semibold text-blue-700">${((customer.creditLimit || 0) - Math.abs(calculateBalance())).toFixed(2)}</span></p>
             </div>
           </div>
         </div>
@@ -1015,18 +976,10 @@ const CustomerAccountView: React.FC<CustomerAccountViewProps> = ({ customer, onC
                     <th className="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                       Monto
                     </th>
-                    <th className="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                      Saldo
-                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {Array.isArray(movements) && movements.map((movement, index) => {
-                    const runningBalance = movements.slice(0, index + 1).reduce((balance, m) => {
-                      return m.type === 'sale' ? balance + m.amount : balance - m.amount;
-                    }, 0);
-                    
-                    return (
+                  {Array.isArray(movements) && movements.map((movement) => (
                       <tr key={movement.id} className="hover:bg-gray-50">
                         <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-800">
                           {new Date(movement.date).toLocaleDateString()}
@@ -1057,14 +1010,8 @@ const CustomerAccountView: React.FC<CustomerAccountViewProps> = ({ customer, onC
                             {movement.type === 'sale' ? '+' : '-'}${movement.amount.toFixed(2)}
                           </span>
                         </td>
-                        <td className="px-4 py-2 whitespace-nowrap text-sm font-bold">
-                          <span className="text-red-700">
-                            ${runningBalance.toFixed(2)}
-                          </span>
-                        </td>
                       </tr>
-                    );
-                  })}
+                  ))}
                 </tbody>
               </table>
               
@@ -1083,7 +1030,7 @@ const CustomerAccountView: React.FC<CustomerAccountViewProps> = ({ customer, onC
             customer={customer}
             onSaleCreated={() => {
               setShowCreditSaleForm(false);
-              reloadMovements();
+              reloadData(); // Recargar movimientos y saldos
             }}
             onClose={() => setShowCreditSaleForm(false)}
           />
@@ -1095,7 +1042,7 @@ const CustomerAccountView: React.FC<CustomerAccountViewProps> = ({ customer, onC
             customer={customer}
             onPaymentCreated={() => {
               setShowPaymentForm(false);
-              reloadMovements();
+              reloadData(); // Recargar movimientos y saldos
             }}
             onClose={() => setShowPaymentForm(false)}
           />

@@ -28,7 +28,9 @@ export async function GET(request: NextRequest) {
           
           // Calcular balance actual
           const balance = movements.reduce((sum, movement) => {
-            return movement.type === 'sale' ? sum + movement.amount : sum - Math.abs(movement.amount);
+            // sale = aumenta la deuda (+)
+            // payment = disminuye la deuda (-)
+            return movement.type === 'sale' ? sum + movement.amount : sum - movement.amount;
           }, 0);
           
           // Obtener fecha de último movimiento de tipo 'sale'
@@ -36,17 +38,24 @@ export async function GET(request: NextRequest) {
             .filter(m => m.type === 'sale')
             .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
           
+          // Obtener fecha de último pago
+          const lastPayment = movements
+            .filter(m => m.type === 'payment')
+            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+          
           return {
             customer,
             balance,
-            lastDeliveryDate: lastSale ? lastSale.date : null
+            lastDeliveryDate: lastSale ? lastSale.date : null,
+            lastPaymentDate: lastPayment ? lastPayment.date : null
           };
         } catch (error) {
           console.error(`Error getting balance for customer ${customer.id}:`, error);
           return {
             customer,
             balance: 0,
-            lastDeliveryDate: null
+            lastDeliveryDate: null,
+            lastPaymentDate: null
           };
         }
       })

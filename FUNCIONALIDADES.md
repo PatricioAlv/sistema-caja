@@ -217,7 +217,7 @@
 
 ---
 
-**Última actualización:** 16 de julio de 2025 - ✅ Migración de seguridad: Reemplazada librería xlsx vulnerable por ExcelJS
+**Última actualización:** 17 de julio de 2025 - ✅ Implementado sistema de ventas con múltiples items y medios de pago combinados
 **Autor:** Sistema de Gestión de Caja
 **Repositorio:** https://github.com/PatricioAlv/sistema-caja
 
@@ -229,3 +229,14 @@
 - ✅ **Compatibilidad mantenida:** Funcionalidad de importación de clientes desde Excel sigue funcionando
 - ✅ **Mejoras de seguridad:** Sin vulnerabilidades detectadas en audit npm
 - ✅ **Arquitectura moderna:** Uso de async/await nativo en lugar de FileReader con callbacks
+
+## 🆕 NUEVAS FUNCIONALIDADES
+
+### 17 de julio de 2025 - Sistema de Ventas Avanzado
+- ✅ **Múltiples items por venta:** Cada venta puede tener varios artículos con código, nombre, precio y cantidad
+- ✅ **Combinación de medios de pago:** Hasta 2 medios de pago diferentes en una sola venta
+- ✅ **Cálculo automático de subtotales:** Los subtotales se calculan automáticamente (precio × cantidad)
+- ✅ **Auto-balance de pagos:** Función para distribuir automáticamente el total entre los medios de pago
+- ✅ **Validación inteligente:** El sistema valida que el total de pagos coincida con el total de la venta
+- ✅ **Interfaz moderna:** Modal amplio con gestión visual de items y medios de pago
+- ✅ **Compatibilidad backwards:** Mantiene compatibilidad con el sistema legacy existente

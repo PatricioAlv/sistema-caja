@@ -39,7 +39,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({ customer, onPaymentCre
       const movementData: CreateAccountMovementData = {
         customerId: customer.id!,
         description: formData.description,
-        amount: -amount, // Negativo porque es un pago
+        amount: amount, // Positivo, ya que el cálculo del balance se encarga del signo
         type: 'payment',
         date: formData.date
       };
